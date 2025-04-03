@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from studentorg.views import HomePageView, OrganizationList, OrganizationCreateView, OrganizationUpdateView, OrganizationDeleteView
 from studentorg.views import OrgMemberListView, OrgMemberCreateView, OrgMemberUpdateView, OrgMemberDeleteView
-from studentorg.views import StudentListView
+from studentorg.views import StudentListView, StudentCreateView
 from studentorg import views
 from django.db import connection
 from django.http import JsonResponse
@@ -23,4 +23,5 @@ urlpatterns = [
     path('orgmember_list/<pk>', OrgMemberUpdateView.as_view(), name='orgmember-update'),
     path('orgmember_list/<pk>/delete/', OrgMemberDeleteView.as_view(), name='orgmember-delete'),
     path('student_list/', StudentListView.as_view(), name='student-list'),
+    path('student_list/add/', StudentCreateView.as_view(), name='student-add'),
 ]
