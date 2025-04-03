@@ -33,14 +33,17 @@
             <tr>
               <th scope="col">Name</th>
               <th scope="col">Organization</th>
-
+              <th scope="col">Action</th>
             </tr>
             </thead>
             <tbody>
               {% for object in object_list %}
               <tr>
                 <td>{{ object.prog_name}}</td>
-                <td>{{ object.college }}</td>            
+                <td>{{ object.college }}</td>
+                <td>
+                    <a href="{% url 'program-update' object.id %}">Edit</a>
+                </td>             
               </try>
               {% empty%}
               <tr>
