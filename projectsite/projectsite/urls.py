@@ -4,7 +4,7 @@ from studentorg.views import HomePageView, OrganizationList, OrganizationCreateV
 from studentorg.views import OrgMemberListView, OrgMemberCreateView, OrgMemberUpdateView, OrgMemberDeleteView
 from studentorg.views import StudentListView, StudentCreateView, StudentUpdateView, StudentDeleteView
 from studentorg.views import CollegeListView, CollegeCreateView, CollegeUpdateView, CollegeDeleteView
-from studentorg.views import ProgramListView, ProgramCreateView, ProgramUpdateView
+from studentorg.views import ProgramListView, ProgramCreateView, ProgramUpdateView, ProgramDeleteView
 from studentorg import views
 from django.db import connection
 from django.http import JsonResponse
@@ -35,4 +35,5 @@ urlpatterns = [
     path('program_list/', ProgramListView.as_view(), name='program-list'),
     path('program_list/add/', ProgramCreateView.as_view(), name='program-add'),
     path('program_list/<pk>/', ProgramUpdateView.as_view(), name='program-update'),
+    path('program_list/<pk>/delete/', ProgramDeleteView.as_view(), name='program-delete'),
 ]

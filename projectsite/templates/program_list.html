@@ -43,6 +43,7 @@
                 <td>{{ object.college }}</td>
                 <td>
                     <a href="{% url 'program-update' object.id %}">Edit</a>
+                    <a href="{% url 'program-delete' object.id %}" class="text-danger">Delete</a>
                 </td>             
               </try>
               {% empty%}
