@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <h4 class="page-title">Edit Organization Member</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Update the details</div>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %} {% include 'includes/form.html' %}
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

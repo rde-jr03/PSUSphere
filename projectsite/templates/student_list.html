@@ -36,6 +36,7 @@
               <th scope="col">First Name</th>
               <th scope="col">Middle Name</th>
               <th scope="col">Program</th>
+              <th scope="col">Action</th>
             </tr>
             </thead>
             <tbody>
@@ -46,7 +47,9 @@
                 <td>{{ object.firstname}}</td>
                 <td>{{ object.middlename}}</td>  
                 <td>{{ object.program}}</td>  
-                           
+                <td>
+                    <a href="{% url 'student-update' object.id %}">Edit</a>
+                </td>          
               </try>
               {% empty%}
               <tr>
