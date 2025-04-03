@@ -39,7 +39,7 @@ class Student(BaseModel):
     firstname = models.CharField(max_length=25)
     middlename = models.CharField(max_length=25, blank=True, null=True)
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
-
+    
     def __str__(self):
         return f"{self.lastname}, {self.firstname}"
 
