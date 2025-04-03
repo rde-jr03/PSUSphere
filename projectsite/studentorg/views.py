@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from studentorg.models import Organization, OrgMember, Student, College
-from studentorg.forms import OrganizationForm, OrgMemberForm, StudentForm
+from studentorg.forms import OrganizationForm, OrgMemberForm, StudentForm, CollegeForm
 from django.urls import reverse_lazy
 
 class HomePageView(ListView):
@@ -114,3 +114,9 @@ class CollegeListView(ListView):
                 Q(college_name__icontains=query)  # Look for college name
             )
         return qs
+    
+class CollegeCreateView(CreateView):
+    model = College
+    form_class = CollegeForm
+    template_name = 'college_add.html'
+    success_url = reverse_lazy('college-list')
