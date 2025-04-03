@@ -3,20 +3,26 @@
 {% block content %}
 <div class="content">
   <div class="container-fluid">
-    <h4 class="page-title">Organization Members</h4>  <!-- Changed title to be more specific -->
+    <h4 class="page-title">Organization Members</h4>
     <div class="row">
       <div class="col-md-12">
         <div class="card">
           <div class="card-header">
-            <div class="card-title">List of Organization Members</div> 
+            <div class="card-title">List of Organization Members</div>
+            <!-- Add Button (only kept feature) -->
+            <div class="pull-right"> 
+              <a href="{% url 'orgmember-add' %}" class="btn btn-success btn-rounded">
+                <i class="la la-plus"></i> Add Member
+              </a>
+            </div>
           </div>
           <div class="card-body">
-            <table class="table table-striped mt-3">
+            <table class="table table-striped">
               <thead>
                 <tr>
-                  <th scope="col">Student</th>
-                  <th scope="col">Organization</th>
-                  <th scope="col">Date Joined</th>
+                  <th>Student</th>
+                  <th>Organization</th>
+                  <th>Date Joined</th>
                   <!-- Removed Action column -->
                 </tr>
               </thead>
@@ -25,19 +31,17 @@
                 <tr>
                   <td>{{ object.student }}</td>
                   <td>{{ object.organization }}</td>
-                  <td>{{ object.date_joined }}</td> 
-                  <!-- Removed Edit/Delete links -->
+                  <td>{{ object.date_joined|date:"M d, Y" }}</td>
                 </tr>
                 {% empty %}
                 <tr>
-                  <td colspan="3" style="text-align: center">  <!-- Changed colspan to 3 -->
-                    <p class="text-sm font-weight-bold mb-0">No Records Found.</p>
+                  <td colspan="3" class="text-center py-4">
+                    <p class="text-muted">No members found</p>
                   </td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
-            <!-- Kept pagination if you need it -->
             {% include 'includes/pagination.html' %}
           </div>
         </div>

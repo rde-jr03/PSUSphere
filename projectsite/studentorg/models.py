@@ -44,11 +44,13 @@ class Student(BaseModel):
         return f"{self.lastname}, {self.firstname}"
 
 
+
 class OrgMember(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    student = models.ForeignKey('Student', on_delete=models.CASCADE)
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
     date_joined = models.DateField(default=timezone.now)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)  # Automatically set on creation
+    updated_at = models.DateTimeField(auto_now=True)      # Automatically updates on save
 
     def __str__(self):
-        return f"{self.student.lastname}, {self.student.firstname}"
+        return f"{self.student} - {self.organization}"
