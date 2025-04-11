@@ -4,18 +4,130 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from studentorg.models import Organization, OrgMember, Student, College, Program
 from studentorg.forms import OrganizationForm, OrgMemberForm, StudentForm, CollegeForm, ProgramForm
 from django.urls import reverse_lazy
-
+from .models import Organization, OrgMember, Student, College, Program
+from .forms import OrganizationForm, OrgMemberForm, StudentForm, CollegeForm, ProgramForm
 from typing import Any
 from django.db.models.query import QuerySet
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
+
+from django.shortcuts import render
+from django.views.generic.list import ListView
+from django.db import connection
+from django.http import JsonResponse
+from django.db.models.functions import ExtractMonth
+from django.db.models import Count
+from datetime import datetime, timedelta
+from django.db import connection
+
+
 @method_decorator(login_required, name='dispatch')
 class HomePageView(ListView):
     model = Organization
     context_object_name = 'home'
     template_name = "home.html"
+
+class ChartView(ListView):
+    template_name = 'chart.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_queryset(self, *args, **kwargs):
+        pass
+    
+def orgMemDoughnutChart(request):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT o.name, COUNT(om.id) AS member_count
+                FROM studentorg_organization o
+                LEFT JOIN studentorg_orgmember om ON o.id = om.organization_id
+                GROUP BY o.name
+            """)
+            rows = cursor.fetchall()
+        
+        result = {name: count for name, count in rows if name}
+        return JsonResponse(result)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def studentCountEveryCollege(request):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT c.college_name, COUNT(s.id) AS student_count
+                FROM studentorg_college c
+                LEFT JOIN studentorg_program p ON c.id = p.college_id
+                LEFT JOIN studentorg_student s ON p.id = s.program_id
+                GROUP BY c.college_name
+            """)
+            rows = cursor.fetchall()
+        
+        result = {name: count for name, count in rows if name}
+        return JsonResponse(result)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def radarStudenCountEveryCollege(request):
+    try:
+        # Reuse the same data as studentCountEveryCollege
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT c.college_name, COUNT(s.id) AS student_count
+                FROM studentorg_college c
+                LEFT JOIN studentorg_program p ON c.id = p.college_id
+                LEFT JOIN studentorg_student s ON p.id = s.program_id
+                GROUP BY c.college_name
+            """)
+            rows = cursor.fetchall()
+        
+        result = {name: count for name, count in rows if name}
+        return JsonResponse(result)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def programPolarchart(request):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT p.prog_name, COUNT(s.id) AS student_count
+                FROM studentorg_program p
+                LEFT JOIN studentorg_student s ON p.id = s.program_id
+                GROUP BY p.prog_name
+            """)
+            rows = cursor.fetchall()
+        
+        result = {name: count for name, count in rows if name}
+        return JsonResponse(result)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def htmlLegendsChart(request):
+    with connection.cursor() as cursor:
+        # Execute raw SQL query to count student members for each organization and their month joined
+        cursor.execute("""
+            SELECT studentorg_organization.name, COUNT(studentorg_orgmember.id) AS student_count, STRFTIME('%m', studentorg_orgmember.date_joined) AS joined_month
+            FROM studentorg_orgmember
+            INNER JOIN studentorg_organization ON studentorg_orgmember.organization_id = studentorg_organization.id
+            GROUP BY studentorg_organization.name, joined_month
+        """)
+        # Fetch all rows from the cursor
+        rows = cursor.fetchall()
+        
+    # Prepare data for the chart
+    result = {}
+    for org_name, count, joined_month in rows:
+        if org_name not in result:
+            result[org_name] = {'student_count': {}, 'total_students': 0}
+        result[org_name]['student_count'][joined_month] = count
+        result[org_name]['total_students'] += count
+
+    return JsonResponse(result)
+
 
 
 class OrganizationList(ListView):

@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="page-inner" style="margin: 100px 50px">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Number of Members of Every Organization</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="doughnut-chart" style="width: 100%; height: 400px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Number of students for every Organization</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="html-legends-chart" style="width: 100%; height: 400px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Number of students of every Colleges</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="doughnut-chart-college" style="width: 100%; height: 400px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Number of students of every Colleges</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="radar-chart-college" style="width: 100%; height: 400px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Number of every programs</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="program-polar-chart" style="width: 100%; height: 400px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block chart %}
+<script>
+  function loadDoughnutChartData() {
+    fetch("/doughnut-chart/")
+      .then((response) => response.json())
+      .then((data) => {
+        var labels = Object.keys(data);
+        var counts = Object.values(data);
+
+        doughnutChart.data.labels = labels;
+        doughnutChart.data.datasets[0].data = counts;
+
+        doughnutChart.update();
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+      
+  var doughnutChart = new Chart(document.getElementById("doughnut-chart").getContext("2d"), {
+    type: 'doughnut',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Number of Members',
+        data: [],
+        backgroundColor: generateRandomColors(100),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      pieceLabel: {
+        render: "percentage",
+        fontColor: "white",
+        fontSize: 14,
+      },
+      legend: {
+        position: "bottom",
+      },
+      responsive: true,
+      maintainAspectRatio: false,
+    }
+  });
+
+  }
+
+  function loadDoughnutChartCollegeData() {
+    fetch("/doughnut-chart-college/")
+      .then((response) => response.json())
+      .then((data) => {
+        var labels = Object.keys(data);
+        var counts = Object.values(data);
+
+        doughnutChartCollege.data.labels = labels;
+        doughnutChartCollege.data.datasets[0].data = counts;
+
+        doughnutChartCollege.update();
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+      
+  var doughnutChartCollege = new Chart(document.getElementById("doughnut-chart-college").getContext("2d"), {
+    type: 'doughnut',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Number of Members',
+        data: [],
+        backgroundColor: generateRandomColors(100),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      pieceLabel: {
+        render: "percentage",
+        fontColor: "white",
+        fontSize: 14,
+      },
+      legend: {
+        position: "bottom",
+      },
+      responsive: true,
+      maintainAspectRatio: false,
+    }
+  });
+
+  }
+
+  function loadRadarChartData() {
+    fetch("/radar-chart-college/")
+      .then(response => response.json())
+      .then(data => {
+        var labels = Object.keys(data);
+        var counts = Object.values(data);
+        
+        myRadarChart.data.labels = labels;
+        myRadarChart.data.datasets[0].data = counts;
+        myRadarChart.update();
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+      
+  var myRadarChart = new Chart(document.getElementById("radar-chart-college").getContext("2d"), {
+      type: "radar",
+      data: {
+        datasets: [
+          {
+            data: [],
+            borderColor: "#1d7af3",
+            backgroundColor: generateRandomColors(100),
+            pointBackgroundColor: generateRandomColors(100),
+            pointHoverRadius: 4,
+            pointRadius: 3,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: {
+          position: "bottom",
+        },
+      },
+    });
+  }
+
+  function loadPolarChartData() {
+    fetch("/program-polar-chart/")
+    .then(response => response.json())
+    .then(data => {
+
+        const labels = Object.keys(data); 
+        const counts = Object.values(data);
+
+        PolarChart.data.labels = labels;
+        PolarChart.data.datasets[0].data = counts;
+
+
+        PolarChart.update();
+    })
+    .catch(error => console.error('Error fetching data:', error));
+
+    var PolarChart = new Chart(document.getElementById("program-polar-chart").getContext("2d"), {
+      type: 'polarArea',
+      data: {
+          labels: [], // Array to store program names
+          datasets: [{
+              label: 'Students per Program',
+              data: [],
+              backgroundColor: generateRandomColors(100),
+  
+  
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          legend: {
+              position: 'bottom',
+          },
+          scale: {
+              ticks: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
+  }
+
+  
+  function loadHTMLData() {
+    fetch('/html-legends-chart/') // Replace '/your-django-view-url/' with your actual URL
+    .then(response => response.json())
+    .then(data => {
+        const orgNames = Object.keys(data); // Get organization names
+        const orgData = Object.values(data); // Get counts of students
+        
+        // Extract months from the first organization's data
+        const months = Object.keys(orgData[0].student_count);
+
+        // Create datasets for each organization
+        const datasets = orgNames.map((orgName, index) => {
+            const countByMonth = orgData[index].student_count;
+            const data = months.map(month => countByMonth[month] || 0); // Fill in 0 if no data for the month
+            return {
+                label: orgName,
+                data: data,
+                backgroundColor: generateRandomColors(100), // You can set different colors for each line if needed
+                borderColor: generateRandomColors(100),
+                borderWidth: 1
+            };
+        });
+
+        // Update chart data and labels
+        htmlChart.data.labels = months;
+        htmlChart.data.datasets = datasets;
+        htmlChart.update();
+    })
+    .catch(error => console.error('Error fetching data:', error));
+
+    // Initialize chart after fetch call
+    var htmlChart = new Chart(document.getElementById("html-legends-chart").getContext("2d"), {
+        type: 'line',
+        data: {
+            labels: [], // Array to store months
+            datasets: [] // Array to store organization data, will be populated after fetching data
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+                position: 'bottom',
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+}
+
+
+
+    
+    function generateRandomColors(count) {
+      var colors = [];
+      for (var i = 0; i < count; i++) {
+          var color = 'rgba(' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ', 0.6)';
+          colors.push(color);
+      }
+      return colors;
+  }
+  
+  
+  loadHTMLData();
+  loadPolarChartData();
+  loadDoughnutChartData();
+  loadDoughnutChartCollegeData();
+  loadRadarChartData();
+
+
+</script>
+{% endblock %}
